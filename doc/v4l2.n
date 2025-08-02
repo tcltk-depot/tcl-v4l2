@@ -1,0 +1,493 @@
+'\"
+'\" Copyright (c) 1993 The Regents of the University of California.
+'\" Copyright (c) 1994-1996 Sun Microsystems, Inc.
+'\" Copyright (c) 2016-2023 Christian Werner <chw at ch minus werner dot de>
+'\"
+'\" See the file "license.terms" for information on usage and redistribution
+'\" of this file, and for a DISCLAIMER OF ALL WARRANTIES.
+'\"
+.TH v4l2 n 8.6 Tk "Tk Extension Commands"
+.\" ---- man.macros begin ----
+.\" The -*- nroff -*- definitions below are for supplemental macros used
+.\" in Tcl/Tk manual entries.
+.\"
+.\" .AP type name in/out ?indent?
+.\"	Start paragraph describing an argument to a library procedure.
+.\"	type is type of argument (int, etc.), in/out is either "in", "out",
+.\"	or "in/out" to describe whether procedure reads or modifies arg,
+.\"	and indent is equivalent to second arg of .IP (shouldn't ever be
+.\"	needed;  use .AS below instead)
+.\"
+.\" .AS ?type? ?name?
+.\"	Give maximum sizes of arguments for setting tab stops.  Type and
+.\"	name are examples of largest possible arguments that will be passed
+.\"	to .AP later.  If args are omitted, default tab stops are used.
+.\"
+.\" .BS
+.\"	Start box enclosure.  From here until next .BE, everything will be
+.\"	enclosed in one large box.
+.\"
+.\" .BE
+.\"	End of box enclosure.
+.\"
+.\" .CS
+.\"	Begin code excerpt.
+.\"
+.\" .CE
+.\"	End code excerpt.
+.\"
+.\" .VS ?version? ?br?
+.\"	Begin vertical sidebar, for use in marking newly-changed parts
+.\"	of man pages.  The first argument is ignored and used for recording
+.\"	the version when the .VS was added, so that the sidebars can be
+.\"	found and removed when they reach a certain age.  If another argument
+.\"	is present, then a line break is forced before starting the sidebar.
+.\"
+.\" .VE
+.\"	End of vertical sidebar.
+.\"
+.\" .DS
+.\"	Begin an indented unfilled display.
+.\"
+.\" .DE
+.\"	End of indented unfilled display.
+.\"
+.\" .SO ?manpage?
+.\"	Start of list of standard options for a Tk widget. The manpage
+.\"	argument defines where to look up the standard options; if
+.\"	omitted, defaults to "options". The options follow on successive
+.\"	lines, in three columns separated by tabs.
+.\"
+.\" .SE
+.\"	End of list of standard options for a Tk widget.
+.\"
+.\" .OP cmdName dbName dbClass
+.\"	Start of description of a specific option.  cmdName gives the
+.\"	option's name as specified in the class command, dbName gives
+.\"	the option's name in the option database, and dbClass gives
+.\"	the option's class in the option database.
+.\"
+.\" .UL arg1 arg2
+.\"	Print arg1 underlined, then print arg2 normally.
+.\"
+.\" .QW arg1 ?arg2?
+.\"	Print arg1 in quotes, then arg2 normally (for trailing punctuation).
+.\"
+.\" .PQ arg1 ?arg2?
+.\"	Print an open parenthesis, arg1 in quotes, then arg2 normally
+.\"	(for trailing punctuation) and then a closing parenthesis.
+.\"
+.\"	# Set up traps and other miscellaneous stuff for Tcl/Tk man pages.
+.if t .wh -1.3i ^B
+.nr ^l \n(.l
+.ad b
+.\"	# Start an argument description
+.de AP
+.ie !"\\$4"" .TP \\$4
+.el \{\
+.   ie !"\\$2"" .TP \\n()Cu
+.   el          .TP 15
+.\}
+.ta \\n()Au \\n()Bu
+.ie !"\\$3"" \{\
+\&\\$1 \\fI\\$2\\fP (\\$3)
+.\".b
+.\}
+.el \{\
+.br
+.ie !"\\$2"" \{\
+\&\\$1	\\fI\\$2\\fP
+.\}
+.el \{\
+\&\\fI\\$1\\fP
+.\}
+.\}
+..
+.\"	# define tabbing values for .AP
+.de AS
+.nr )A 10n
+.if !"\\$1"" .nr )A \\w'\\$1'u+3n
+.nr )B \\n()Au+15n
+.\"
+.if !"\\$2"" .nr )B \\w'\\$2'u+\\n()Au+3n
+.nr )C \\n()Bu+\\w'(in/out)'u+2n
+..
+.AS Tcl_Interp Tcl_CreateInterp in/out
+.\"	# BS - start boxed text
+.\"	# ^y = starting y location
+.\"	# ^b = 1
+.de BS
+.br
+.mk ^y
+.nr ^b 1u
+.if n .nf
+.if n .ti 0
+.if n \l'\\n(.lu\(ul'
+.if n .fi
+..
+.\"	# BE - end boxed text (draw box now)
+.de BE
+.nf
+.ti 0
+.mk ^t
+.ie n \l'\\n(^lu\(ul'
+.el \{\
+.\"	Draw four-sided box normally, but don't draw top of
+.\"	box if the box started on an earlier page.
+.ie !\\n(^b-1 \{\
+\h'-1.5n'\L'|\\n(^yu-1v'\l'\\n(^lu+3n\(ul'\L'\\n(^tu+1v-\\n(^yu'\l'|0u-1.5n\(ul'
+.\}
+.el \}\
+\h'-1.5n'\L'|\\n(^yu-1v'\h'\\n(^lu+3n'\L'\\n(^tu+1v-\\n(^yu'\l'|0u-1.5n\(ul'
+.\}
+.\}
+.fi
+.br
+.nr ^b 0
+..
+.\"	# VS - start vertical sidebar
+.\"	# ^Y = starting y location
+.\"	# ^v = 1 (for troff;  for nroff this doesn't matter)
+.de VS
+.if !"\\$2"" .br
+.mk ^Y
+.ie n 'mc \s12\(br\s0
+.el .nr ^v 1u
+..
+.\"	# VE - end of vertical sidebar
+.de VE
+.ie n 'mc
+.el \{\
+.ev 2
+.nf
+.ti 0
+.mk ^t
+\h'|\\n(^lu+3n'\L'|\\n(^Yu-1v\(bv'\v'\\n(^tu+1v-\\n(^Yu'\h'-|\\n(^lu+3n'
+.sp -1
+.fi
+.ev
+.\}
+.nr ^v 0
+..
+.\"	# Special macro to handle page bottom:  finish off current
+.\"	# box/sidebar if in box/sidebar mode, then invoked standard
+.\"	# page bottom macro.
+.de ^B
+.ev 2
+'ti 0
+'nf
+.mk ^t
+.if \\n(^b \{\
+.\"	Draw three-sided box if this is the box's first page,
+.\"	draw two sides but no top otherwise.
+.ie !\\n(^b-1 \h'-1.5n'\L'|\\n(^yu-1v'\l'\\n(^lu+3n\(ul'\L'\\n(^tu+1v-\\n(^yu'\h'|0u'\c
+.el \h'-1.5n'\L'|\\n(^yu-1v'\h'\\n(^lu+3n'\L'\\n(^tu+1v-\\n(^yu'\h'|0u'\c
+.\}
+.if \\n(^v \{\
+.nr ^x \\n(^tu+1v-\\n(^Yu
+\kx\h'-\\nxu'\h'|\\n(^lu+3n'\ky\L'-\\n(^xu'\v'\\n(^xu'\h'|0u'\c
+.\}
+.bp
+'fi
+.ev
+.if \\n(^b \{\
+.mk ^y
+.nr ^b 2
+.\}
+.if \\n(^v \{\
+.mk ^Y
+.\}
+..
+.\"	# DS - begin display
+.de DS
+.RS
+.nf
+.sp
+..
+.\"	# DE - end display
+.de DE
+.fi
+.RE
+.sp
+..
+.\"	# SO - start of list of standard options
+.de SO
+'ie '\\$1'' .ds So \\fBoptions\\fR
+'el .ds So \\fB\\$1\\fR
+.SH "STANDARD OPTIONS"
+.LP
+.nf
+.ta 5.5c 11c
+.ft B
+..
+.\"	# SE - end of list of standard options
+.de SE
+.fi
+.ft R
+.LP
+See the \\*(So manual entry for details on the standard options.
+..
+.\"	# OP - start of full description for a single option
+.de OP
+.LP
+.nf
+.ta 4c
+Command-Line Name:	\\fB\\$1\\fR
+Database Name:	\\fB\\$2\\fR
+Database Class:	\\fB\\$3\\fR
+.fi
+.IP
+..
+.\"	# CS - begin code excerpt
+.de CS
+.RS
+.nf
+.ta .25i .5i .75i 1i
+..
+.\"	# CE - end code excerpt
+.de CE
+.fi
+.RE
+..
+.\"	# UL - underline word
+.de UL
+\\$1\l'|0\(ul'\\$2
+..
+.\"	# QW - apply quotation marks to word
+.de QW
+.ie '\\*(lq'"' ``\\$1''\\$2
+.\"" fix emacs highlighting
+.el \\*(lq\\$1\\*(rq\\$2
+..
+.\"	# PQ - apply parens and quotation marks to word
+.de PQ
+.ie '\\*(lq'"' (``\\$1''\\$2)\\$3
+.\"" fix emacs highlighting
+.el (\\*(lq\\$1\\*(rq\\$2)\\$3
+..
+.\"	# QR - quoted range
+.de QR
+.ie '\\*(lq'"' ``\\$1''\\-``\\$2''\\$3
+.\"" fix emacs highlighting
+.el \\*(lq\\$1\\*(rq\\-\\*(lq\\$2\\*(rq\\$3
+..
+.\"	# MT - "empty" string
+.de MT
+.QW ""
+..
+.\" ---- man.macros end ----
+.BS
+'\" Note:  do not modify the .SH NAME line immediately below!
+.SH NAME
+v4l2 \- Video For Linux Two interface
+.SH SYNOPSIS
+\fBpackage require v4l2\fR
+.br
+\fBv4l2 \fIoption\fR ?\fIarg ...\fR?
+.BE
+.SH DESCRIPTION
+.PP
+This command provides several operations to interface Video For Linux Two
+in order to operate camera devices. \fIOption\fR indicates what to carry out
+on the Video For Linux Two subsystem. Any unique abbreviation for
+\fIoption\fR is acceptable. The valid options are:
+.TP
+\fBv4l2 close \fIdevid\fR
+.
+Closes the device identified by \fIdevid\fR which has been opened before
+using \fBv4l2 open\fR.
+.TP
+\fBv4l2 counters \fIdevid\fR
+.
+Reports a two element list of statistic counters on the device identified
+by \fBdevid\fR. The first element is the number of video frames received,
+the second the number of video frames processed with \fB4vl2 greyimage\fR
+or \fBv4l2 image\fR. This information can be used to detect dropped frames.
+.TP
+\fBv4l2 devices\fR
+.
+Returns a list of device names which can be used for \fBv4l2 open\fR.
+If \fBudev\fR support is available, this list is refreshed on
+plug and unplug of devices. Otherwise it is made up of a snapshot of
+suitable file names in the \fB/dev\fR directory.
+.TP
+\fBv4l2 greyimage\fR \fIdevid mask\fR ?\fIphotoImage\fR?
+.
+Copies the most recent captured image of the device \fIdevid\fR into
+the photo image identified by \fIphotoImage\fR and returns non-zero on
+success or zero if no data transfer has taken place. The image is
+converted to greyscale if the capture format delivers color images, where
+\fImask\fR controls the conversion. If it is empty or \fBRGB\fR, all
+color components are used for conversion, otherwise for each letter
+\fBR\fR, \fBG\fR, and \fBB\fR the respective color component is used.
+If more than one color component is used in the conversion, the weights
+are 0.299 for red, 0.587 for green, and 0.114 for blue.
+If \fIphotoImage\fR is omitted, a four element list is returned with the
+first element being the image width, the second the image height,
+the third the number of bytes per pixel (one or two), and the last the
+image's pixel values with one or two bytes per grey pixel as a byte array.
+In this case an error is indicated by throwing an exception.
+.TP
+\fBv4l2 greyshift\fR \fIdevid\fR ?\fIshift\fR?
+.
+Returns or sets the bit shift to be applied on grey images with a
+bit depth higher than 8 which are captured from device \fIdevid\fR.
+The default value is 4, which is suitable for greyscale cameras
+with 12 bit resolution. The shift is not applied when the \fBimage\fR
+subcommand retrieves raw byte array data.
+.TP
+\fBv2l2 image\fR \fIdevid\fR ?\fIphotoImage\fR?
+.
+Copies the most recent captured image of the device \fIdevid\fR into
+the photo image identified by \fIphotoImage\fR and returns non-zero on
+success or zero if no data transfer has taken place.
+If \fIphotoImage\fR is omitted, a four element list is returned with the
+first element being the image width, the second the image height,
+the third the number of bytes per pixel, and the last the image's pixel
+values with 3 bytes per pixel in red, green, blue order, or 1 or 2 bytes
+per grey pixel as a byte array. In this case an error is indicated by
+throwing an exception.
+.TP
+\fBv4l2 info\fR ?\fIdevid\fR?
+.
+Returns information on open devices. If \fIdevid\fR is specified,
+a list of two elements is returned, the first being the device name and
+the second the image callback command for that device, i.e. the same
+arguments which were used on \fBv4l2 open\fR. If \fIdevid\fR is omitted,
+a list of \fIdevid\fRs, i.e. all currently opened devices is returned.
+.TP
+\fBv4l2 isloopback\fR \fIdevname\fR
+.
+Tests if \fIdevname\fR is a loopback video device and returns true or
+false.
+.TP
+\fBv4l2 listen\fR ?\fIcallback\fR?
+.
+Retrieves or sets the callback command called on plug and unplug of devices.
+When a device is plugged or unplugged that callback is invoked with two
+additional arguments: the type of event (\fBadd\fR or \fBremove\fR)
+and the device name which was added or removed. Only useable if \fBudev\fR
+support is available.
+.TP
+\fBv4l2 loopback\fR \fIdevname\fR ?\fIfourcc width height fps\fR?
+.
+Retrieves or sets frame format and rate of the loopback video device
+\fIdevname\fR. The parameter \fIfourcc\fR specifies the format code,
+the image size is given as \fIwidth\fR times \fIheight\fR pixels, and
+the frame rate \fIfps\fR as fraction, i.e. 1/30, or as an integral number,
+both expressing frames per second. When no parameters are specified, the
+current settings are returned as a four element list of \fIfourcc\fR,
+\fIwidth\fR, \fIheight\fR, and \fIfps\fR. The supported \fIfourcc\fRs are
+\fBBGR3\fR, \fBBGR4\fR, \fBRGB3\fR, \fBRGB4\fR, \fBGREY\fR, \fBYUYV\fR, and
+\fBYVYU\fR.
+.TP
+\fBv4l2 mbcopy\fR \fIbytearray1 bytearray2 mask\fR
+.
+Copies the content of RGB byte array \fIbytearray2\fR into the byte array
+\fIbytearray1\fR using an RGB \fImask\fR. Both byte arrays must have identical
+length which must be a multiple of 3 (for RGB). The main purpose of this
+command is to combine images from two cameras into an anaglyph 3D, where
+(for a red-cyan anaglyph) the left camera image uses mask 0x00FF0000
+(red component) and the right camera image uses mask 0x0000FFFF
+(green and blue components).
+.TP
+\fBv4l2 mcopy\fR \fIphoto1 photo2 mask\fR
+.
+Copies the content of the photo image \fIphoto2\fR into the photo image
+\fIphoto1\fR using an ARGB \fImask\fR. Both photo images must have identical
+width, height, and depth. The main purpose of this command is to combine
+images from two cameras into an anaglyph 3D, where (for a red-cyan anaglyph)
+the left camera image uses mask 0x00FF0000 (red component) and the right
+camera image uses mask 0x0000FFFF (green and blue components).
+.TP
+\fBv4l2 mirror\fR \fIdevid\fR ?\fIx y\fR?
+.
+Retrieves or sets flags to mirror captured images along the X or Y axis.
+Parameters \fIx\fR and \fIy\fR if specified must be boolean values.
+.TP
+\fBv4l2 open\fR \fIdevname callback\fR
+.
+Opens the device with device name (UN*X pathname) \fIdevname\fR and
+establishes \fIcallback\fR as command to be invoked on captured
+images and finally returns a \fIdevid\fR, i.e. a handle to further deal with
+the device. Two additional parameters are appended when \fIcallback\fR
+is invoked: the first is the \fIdevid\fR of the device, the second
+a frame counter with the initial value zero based on the last start of
+image capture. If an error is detected during image capture, the word
+\fBerror\fR is used instead of the frame counter.
+.TP
+\fBv4l2 orientation\fR \fIdevid\fR ?\fIdegrees\fR?
+.
+Retrieves or sets the orientation of captured images regarding image
+rotation. \fIDegrees\fR if specified must be an integer number.
+.TP
+\fBv4l2 parameters\fR \fIdevid\fR ?\fIkey value ...\fR?
+.
+Returns or changes device parameters for the device identified by \fIdevid\fR
+given as key-value pairs, e.g. \fBframe-size 320x240\fR will change the size
+of captured images to width 320 and height 240. The command returns the
+current device parameters (after the potential change, when keys and values
+where given) as a key-value list which can be processed with \fBarray set\fR
+or \fBdict get\fR.
+.TP
+\fBv4l2 start\fR \fIdevid\fR
+Starts capturing images of the device identified by \fIdevid\fR. When
+an image is ready, the callback command set on \fBv4l2 open\fR is
+invoked.
+.TP
+\fBv4l2 state\fR \fIdevid\fR
+.
+Returns the image capture state of the device identified by \fIdevid\fR.
+The result is the string \fBcapture\fR if the device is started,
+\fBstopped\fR if the device is stopped, or \fBerror\fR if an error
+has been detected while image capture was active.
+.TP
+\fBv4l2 stop\fR \fIdevid\fR
+.
+Stops capturing images of the device identified by \fIdevid\fR.
+.TP
+\fBv4l2 tophoto\fR \fIwidth height bpp bytearray\fR ?\fIrot mirrorx mirrory\fR?
+.
+Makes the RGB (\fIbpp\fR is 3) or grey (\fIbpp\fR is 1) byte array
+\fIbytearray\fR of \fIwidth\fR times \fIheight\fR pixels into a Tk
+photo image. Optionally, the data is rotated by \fIrot\fR degrees
+(possible values 0, 90, 180, 270) and/or mirrored along the X and/or
+Y axis as specified by the boolean values \fImirrorx\fR and \fImirrory\fR.
+.TP
+\fBv4l2 write\fR \fIdevid bytearray\fR
+.
+Writes the RGB or grey bytes in \fIbytearray\fR to the device identified
+by \fIdevid\fR which must be an open loopback video device. The size
+of \fBbytearray\fR must match the video width/height of the loopback device.
+Data is converted to \fBYUYV\fR if this is detected for the output path of
+the loopback device.
+.TP
+\fBv4l2 writephoto\fR \fIdevid photo\fR
+.
+Writes the content of the photo image \fIphoto\fR to the device identified
+by \fIdevid\fR which must be an open loopback video device. The format
+written is either \fBRGB4\fR, \fBYUYV\fR, or \fBGREY\fR with the photo's
+dimensions depending on which format is detected for the output path of the
+loopback device.
+.
+.PP
+The \fBv4l2\fR command tries to lazy load Tk, thus allowing to use it
+from a normal \fBtclsh\fR. Only when a photo image is required by a
+subcommand, Tk must be available and an attempt to load it is made.
+.
+.PP
+For the \fIfourcc\fR format codes in \fBv4l2 loopback\fR, consult the
+Linux header file \fI/usr/include/linux/videodev2.h\fR. The most useful
+formats are \fBRGB4\fR (8 bits per color in a 32 bit value per pixel),
+\fBRGB3\fR (8 bits per color packed into 24 bits), and \fBGREY\fR
+(8 bits greyscale). Limited support for \fBYUYV\fR and \fBYVYU\fR
+(YUV 4:2:2 interleaved) exists for the \fBv4l2 writephoto\fR subcommand, too.
+.
+.SH "SEE ALSO"
+file(n), open(n), close(n), photo(n), image(n)
+.SH KEYWORDS
+files, image, photo, video, camera
+'\" Local Variables:
+'\" mode: nroff
+'\" fill-column: 78
+'\" End:

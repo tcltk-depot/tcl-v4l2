@@ -1,2 +1,4 @@
-# tcl-v4l2
-Tcl extension to play video on Linux
+v4l2
+----
+
+Tcl interface to Video For Linux Two
